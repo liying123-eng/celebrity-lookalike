@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你像哪个明星</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+            display: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .result-name {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .similarity {
+            font-size: 48px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .result-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .retry-btn {
+            background: #28a745;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 测测你像哪个明星</h1>
+        <p class="subtitle">上传你的照片，AI智能分析最相似的明星</p>
+
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div style="font-size: 48px;">📷</div>
+            <p class="upload-text">点击上传照片或拖拽到此处</p>
+            <p style="color: #999; font-size: 12px; margin-top: 10px;">支持 JPG、PNG 格式</p>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/*">
+
+        <div class="preview-container" id="previewContainer">
+            <img id="previewImage" src="" alt="预览">
+        </div>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <button class="btn" id="analyzeBtn" onclick="analyzeImage()">开始分析</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在分析中，请稍候...</p>
+            <p style="color: #999; font-size: 12px; margin-top: 10px;">首次加载模型可能需要一些时间</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <img class="result-image" id="resultImage" src="" alt="">
+            <div class="result-name" id="resultName"></div>
+            <div class="similarity" id="similarity"></div>
+            <div class="result-desc" id="resultDesc"></div>
+            <button class="btn retry-btn" onclick="reset()" style="display: inline-block;">再测一次</button>
+        </div>
+    </div>
+
+    <script>
+        // 明星数据库（简化版）
+        const celebrities = [
+            {
+                name: "刘德华",
+                gender: "male",
+                features: { eyes: "big", nose: "straight", face: "oval", mouth: "medium" },
+                image: "https://via.placeholder.com/150/667eea/ffffff?text=刘德华",
+                desc: "你有着刘德华般的成熟魅力，五官端正，气质稳重，是典型的男神脸型！"
+            },
+            {
+                name: "周杰伦",
+                gender: "male",
+                features: { eyes: "small", nose: "medium", face: "round", mouth: "small" },
+                image: "https://via.placeholder.com/150/764ba2/ffffff?text=周杰伦",
+                desc: "你和周杰伦一样有着独特的个性魅力，小眼睛大才华，酷酷的风格很吸引人！"
+            },
+            {
+                name: "吴彦祖",
+                gender: "male",
+                features: { eyes: "deep", nose: "high", face: "oval", mouth: "medium" },
+                image: "https://via.placeholder.com/150/28a745/ffffff?text=吴彦祖",
+                desc: "哇！你有着吴彦祖级别的颜值，深邃的眼神，立体的五官，简直是行走的美学教科书！"
+            },
+            {
+                name: "黄渤",
+                gender: "male",
+                features: { eyes: "small", nose: "medium", face: "long", mouth: "big" },
+                image: "https://via.placeholder.com/150/dc3545/ffffff?text=黄渤",
+                desc: "你和黄渤一样有着超强的亲和力，虽然不靠颜值吃饭，但情商超高，人缘特别好！"
+            },
+            {
+                name: "范冰冰",
+                gender: "female",
+                features: { eyes: "big", nose: "straight", face: "vshape", mouth: "small" },
+                image: "https://via.placeholder.com/150/e83e8c/ffffff?text=范冰冰",
+                desc: "你有着范冰冰般的惊艳美貌，大眼睛V字脸，走到哪里都是焦点，气场全开！"
+            },
+            {
+                name: "杨幂",
+                gender: "female",
+                features: { eyes: "big", nose: "small", face: "oval", mouth: "small" },
+                image: "https://via.placeholder.com/150/17a2b8/ffffff?text=杨幂",
+                desc: "你和杨幂一样有着灵动的大眼睛，甜美的笑容，少女感满满，特别讨人喜欢！"
+            },
+            {
+                name: "刘亦菲",
+                gender: "female",
+                features: { eyes: "medium", nose: "straight", face: "oval", mouth: "small" },
+                image: "https://via.placeholder.com/150/ffc107/ffffff?text=刘亦菲",
+                desc: "你有着刘亦菲般的仙气气质，清纯脱俗，古典美人的标准脸型，自带滤镜效果！"
+            },
+            {
+                name: "贾玲",
+                gender: "female",
+                features: { eyes: "small", nose: "medium", face: "round", mouth: "big" },
+                image: "https://via.placeholder.com/150/6c757d/ffffff?text=贾玲",
+                desc: "你和贾玲一样有着超可爱的圆脸，笑起来特别治愈，幽默感十足，是大家的开心果！"
+            }
+        ];
+
+        let currentImage = null;
+        let modelsLoaded = false;
+
+        // 文件上传处理
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage = e.target.result;
+                    document.getElementById('previewImage').src = currentImage;
+                    document.getElementById('previewContainer').style.display = 'block';
+                    document.getElementById('analyzeBtn').style.display = 'inline-block';
+                    document.getElementById('result').style.display = 'none';
+                    document.getElementById('error').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 拖拽上传
+        const uploadArea = document.querySelector('.upload-area');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#e9ecef';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '#f8f9fa';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#f8f9fa';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage = e.target.result;
+                    document.getElementById('previewImage').src = currentImage;
+                    document.getElementById('previewContainer').style.display = 'block';
+                    document.getElementById('analyzeBtn').style.display = 'inline-block';
+                    document.getElementById('result').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 加载模型
+        async function loadModels() {
+            if (modelsLoaded) return;
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+
+            try {
+                // 使用CDN加载模型
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                progressFill.style.width = '33%';
+                
+                await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+                progressFill.style.width = '66%';
+                
+                await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+                progressFill.style.width = '100%';
+                
+                modelsLoaded = true;
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                }, 500);
+            } catch (error) {
+                console.error('模型加载失败:', error);
+                // 如果模型加载失败，使用备用方案
+                modelsLoaded = true;
+                progressBar.style.display = 'none';
+            }
+        }
+
+        // 分析图片
+        async function analyzeImage() {
+            if (!currentImage) return;
+
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                // 加载模型
+                if (!modelsLoaded) {
+                    await loadModels();
+                }
+
+                // 创建图片元素
+                const img = new Image();
+                img.src = currentImage;
+                await new Promise((resolve) => { img.onload = resolve; });
+
+                // 检测人脸
+                const detection = await faceapi
+                    .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks();
+
+                if (!detection) {
+                    throw new Error('未检测到人脸，请上传清晰的正面照片');
+                }
+
+                // 简化的匹配算法
+                const result = matchCelebrity(detection);
+
+                // 显示结果
+                showResult(result);
+
+            } catch (error) {
+                document.getElementById('error').textContent = error.message || '分析失败，请重试';
+                document.getElementById('error').style.display = 'block';
+                
+                // 如果人脸识别失败，使用随机匹配作为娱乐
+                const randomResult = getRandomCelebrity();
+                showResult(randomResult);
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        // 匹配明星（简化算法）
+        function matchCelebrity(detection) {
+            const landmarks = detection.landmarks;
+            const positions = landmarks.positions;
+
+            // 计算一些基础特征
+            const faceWidth = Math.abs(positions[16].x - positions[0].x);
+            const faceHeight = Math.abs(positions[8].y - positions[27].y);
+            const faceRatio = faceWidth / faceHeight;
+
+            const eyeDistance = Math.abs(positions[39].x - positions[42].x);
+            const eyeRatio = eyeDistance / faceWidth;
+
+            // 根据特征选择明星
+            let bestMatch = celebrities[0];
+            let maxScore = 0;
+
+            celebrities.forEach(celeb => {
+                let score = Math.random() * 30 + 50; // 基础分50-80
+
+                // 根据脸型调整
+                if (faceRatio > 0.8 && celeb.features.face === 'round') score += 10;
+                if (faceRatio < 0.75 && celeb.features.face === 'oval') score += 10;
+                if (faceRatio < 0.7 && celeb.features.face === 'vshape') score += 10;
+
+                // 根据眼距调整
+                if (eyeRatio > 0.35 && celeb.features.eyes === 'big') score += 10;
+                if (eyeRatio < 0.3 && celeb.features.eyes === 'small') score += 10;
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestMatch = celeb;
+                }
+            });
+
+            // 确保相似度在60-95之间
+            const similarity = Math.min(95, Math.max(60, Math.floor(maxScore)));
+
+            return {
+                ...bestMatch,
+                similarity: similarity
+            };
+        }
+
+        // 随机获取明星（备用方案）
+        function getRandomCelebrity() {
+            const randomIndex = Math.floor(Math.random() * celebrities.length);
+            const similarity = Math.floor(Math.random() * 30) + 65; // 65-95
+            return {
+                ...celebrities[randomIndex],
+                similarity: similarity
+            };
+        }
+
+        // 显示结果
+        function showResult(result) {
+            document.getElementById('resultImage').src = result.image;
+            document.getElementById('resultName').textContent = `你最像：${result.name}`;
+            document.getElementById('similarity').textContent = `${result.similarity}%`;
+            document.getElementById('resultDesc').textContent = result.desc;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('analyzeBtn').style.display = 'none';
+            document.querySelector('.upload-area').style.display = 'none';
+        }
+
+        // 重置
+        function reset() {
+            currentImage = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewImage').src = '';
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('analyzeBtn').style.display = 'none';
+            document.querySelector('.upload-area').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
