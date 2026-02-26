@@ -75,6 +75,74 @@
             display: none;
         }
 
+        /* 密码验证样式 */
+        .password-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .password-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .password-container p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .password-input {
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            width: 250px;
+            text-align: center;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .password-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .password-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .password-error {
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .usage-info {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: none;
+        }
+
         .preview-container {
             display: none;
             margin-top: 20px;
@@ -219,30 +287,68 @@
 
         <input type="file" id="fileInput" accept="image/*">
 
-        <div class="preview-container" id="previewContainer">
-            <img id="previewImage" src="" alt="预览">
+        <!-- 密码验证界面 -->
+        <div class="password-container" id="passwordContainer">
+            <h2>🔐 请输入访问密码</h2>
+            <p>购买后获取密码，每人可测试 2 次<br>分享好友需单独购买</p>
+            <input type="password" class="password-input" id="passwordInput" placeholder="输入密码" maxlength="10">
+            <br>
+            <button class="password-btn" onclick="verifyPassword()">进入测试</button>
+            <div class="password-error" id="passwordError">密码错误，请重新输入</div>
         </div>
 
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+        <!-- 主内容区 -->
+        <div class="main-content" id="mainContent">
+            <div class="usage-info" id="usageInfo">剩余测试次数：2</div>
 
-        <button class="btn" id="analyzeBtn" onclick="analyzeImage()">开始分析</button>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" stroke-width="2" style="margin-bottom: 15px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <div class="upload-text">
+                    点击或拖拽上传照片<br>
+                    <small>支持 JPG、PNG 格式</small>
+                </div>
+            </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>正在分析中，请稍候...</p>
-            <p style="color: #999; font-size: 12px; margin-top: 10px;">首次加载模型可能需要一些时间</p>
-        </div>
+            <input type="file" id="fileInput" accept="image/*">
 
-        <div class="error" id="error"></div>
+            <div class="preview-container" id="previewContainer">
+                <img id="previewImage" src="" alt="预览">
+            </div>
 
-        <div class="result" id="result">
-            <img class="result-image" id="resultImage" src="" alt="">
-            <div class="result-name" id="resultName"></div>
-            <div class="similarity" id="similarity"></div>
-            <div class="result-desc" id="resultDesc"></div>
-            <button class="btn retry-btn" onclick="reset()" style="display: inline-block;">再测一次</button>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <button class="btn" id="analyzeBtn" onclick="analyzeImage()">开始分析</button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>正在分析中，请稍候...</p>
+                <p style="color: #999; font-size: 12px; margin-top: 10px;">首次加载模型可能需要一些时间</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="result" id="result">
+                <img class="result-image" id="resultImage" src="" alt="">
+                <div class="result-name" id="resultName"></div>
+                <div class="similarity" id="similarity"></div>
+                <div class="result-desc" id="resultDesc"></div>
+                <button class="btn retry-btn" onclick="reset()" style="display: inline-block;">再测一次</button>
+                
+                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                    <h3 style="margin-bottom: 15px;">🎁 福利活动</h3>
+                    <p style="font-size: 14px; line-height: 1.8; margin-bottom: 15px;">
+                        1. 店铺复购仅需 <strong style="font-size: 18px;">1.5元</strong><br>
+                        2. 好评晒图可额外获得 <strong style="font-size: 18px;">2次</strong> 测试机会
+                    </p>
+                    <p style="font-size: 12px; opacity: 0.9;">联系客服领取奖励</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -761,6 +867,89 @@
             }
         });
 
+        // 密码验证配置
+        const CORRECT_PASSWORD = 'STAR2024'; // 访问密码
+        const MAX_USAGE = 2; // 每个设备最多使用次数
+
+        // 检查是否已验证
+        function checkAuth() {
+            const isVerified = localStorage.getItem('celebrity_lookalike_verified');
+            const usageCount = parseInt(localStorage.getItem('celebrity_lookalike_usage') || '0');
+            
+            if (isVerified === 'true' && usageCount < MAX_USAGE) {
+                showMainContent();
+                updateUsageDisplay();
+            } else if (isVerified === 'true' && usageCount >= MAX_USAGE) {
+                // 次数用完，清除验证状态
+                localStorage.removeItem('celebrity_lookalike_verified');
+                localStorage.removeItem('celebrity_lookalike_usage');
+                showPasswordScreen();
+            } else {
+                showPasswordScreen();
+            }
+        }
+
+        // 显示密码界面
+        function showPasswordScreen() {
+            document.getElementById('passwordContainer').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+
+        // 显示主内容
+        function showMainContent() {
+            document.getElementById('passwordContainer').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        // 验证密码
+        function verifyPassword() {
+            const input = document.getElementById('passwordInput').value.trim();
+            const errorDiv = document.getElementById('passwordError');
+            
+            if (input === CORRECT_PASSWORD) {
+                localStorage.setItem('celebrity_lookalike_verified', 'true');
+                localStorage.setItem('celebrity_lookalike_usage', '0');
+                errorDiv.style.display = 'none';
+                showMainContent();
+                updateUsageDisplay();
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // 更新使用次数显示
+        function updateUsageDisplay() {
+            const usageCount = parseInt(localStorage.getItem('celebrity_lookalike_usage') || '0');
+            const remaining = MAX_USAGE - usageCount;
+            document.getElementById('usageInfo').textContent = `剩余测试次数：${remaining}`;
+        }
+
+        // 增加使用次数
+        function incrementUsage() {
+            const usageCount = parseInt(localStorage.getItem('celebrity_lookalike_usage') || '0');
+            const newCount = usageCount + 1;
+            localStorage.setItem('celebrity_lookalike_usage', newCount.toString());
+            updateUsageDisplay();
+            
+            // 如果次数用完，显示提示
+            if (newCount >= MAX_USAGE) {
+                setTimeout(() => {
+                    alert('测试次数已用完，如需继续测试请重新购买获取新密码');
+                }, 500);
+            }
+        }
+
+        // 页面加载时检查认证状态
+        checkAuth();
+
+        // 回车键提交密码
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
         // 拖拽上传
         const uploadArea = document.querySelector('.upload-area');
         uploadArea.addEventListener('dragover', (e) => {
@@ -839,20 +1028,24 @@
                 img.src = currentImage;
                 await new Promise((resolve) => { img.onload = resolve; });
 
-                // 检测人脸
+                // 检测人脸并提取特征描述符
                 const detection = await faceapi
                     .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks();
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
 
                 if (!detection) {
                     throw new Error('未检测到人脸，请上传清晰的正面照片');
                 }
 
-                // 简化的匹配算法
-                const result = matchCelebrity(detection);
+                // 使用128维特征向量匹配
+                const result = matchCelebrityByDescriptor(detection);
 
                 // 显示结果
                 showResult(result);
+
+                // 增加使用次数
+                incrementUsage();
 
             } catch (error) {
                 document.getElementById('error').textContent = error.message || '分析失败，请重试';
@@ -867,44 +1060,94 @@
             document.getElementById('analyzeBtn').disabled = false;
         }
 
-        // 匹配明星（简化算法）
-        function matchCelebrity(detection) {
-            const landmarks = detection.landmarks;
-            const positions = landmarks.positions;
+        // 计算两个128维特征向量的欧氏距离
+        function euclideanDistance(descriptor1, descriptor2) {
+            let sum = 0;
+            for (let i = 0; i < descriptor1.length; i++) {
+                const diff = descriptor1[i] - descriptor2[i];
+                sum += diff * diff;
+            }
+            return Math.sqrt(sum);
+        }
 
-            // 计算一些基础特征
-            const faceWidth = Math.abs(positions[16].x - positions[0].x);
-            const faceHeight = Math.abs(positions[8].y - positions[27].y);
-            const faceRatio = faceWidth / faceHeight;
+        // 将距离转换为相似度百分比
+        function distanceToSimilarity(distance) {
+            // face-api.js 中，0.6 是通常的阈值，距离越小越相似
+            // 距离范围大约是 0 到 1.5
+            // 映射到 50-98% 的相似度
+            const maxDistance = 1.2;
+            const minDistance = 0.3;
+            const normalizedDist = Math.max(0, Math.min(1, (distance - minDistance) / (maxDistance - minDistance)));
+            const similarity = Math.round(98 - normalizedDist * 48);
+            return Math.max(50, Math.min(98, similarity));
+        }
 
-            const eyeDistance = Math.abs(positions[39].x - positions[42].x);
-            const eyeRatio = eyeDistance / faceWidth;
-
-            // 根据特征选择明星
+        // 使用128维特征向量匹配明星
+        function matchCelebrityByDescriptor(detection) {
+            const userDescriptor = detection.descriptor;
+            
+            // 为每个明星生成一个基于名字的稳定特征向量
+            // 这样同一个明星每次匹配结果一致
+            function generateDescriptorFromName(name) {
+                const descriptor = new Float32Array(128);
+                let seed = 0;
+                for (let i = 0; i < name.length; i++) {
+                    seed += name.charCodeAt(i);
+                }
+                
+                // 根据明星的性别和特征调整基础向量
+                const celeb = celebrities.find(c => c.name === name);
+                
+                for (let i = 0; i < 128; i++) {
+                    // 使用伪随机数生成，但保持确定性
+                    seed = (seed * 9301 + 49297) % 233280;
+                    let value = seed / 233280;
+                    
+                    // 根据面部特征调整某些维度的值
+                    if (celeb) {
+                        // 眼睛特征影响维度 0-31
+                        if (i < 32) {
+                            if (celeb.features.eyes === 'big') value = Math.max(0.3, value + 0.2);
+                            else if (celeb.features.eyes === 'small') value = Math.min(0.7, value - 0.1);
+                        }
+                        // 鼻子特征影响维度 32-63
+                        else if (i < 64) {
+                            if (celeb.features.nose === 'high') value = Math.max(0.3, value + 0.2);
+                            else if (celeb.features.nose === 'small') value = Math.min(0.7, value - 0.1);
+                        }
+                        // 脸型特征影响维度 64-95
+                        else if (i < 96) {
+                            if (celeb.features.face === 'vshape') value = Math.max(0.3, value + 0.15);
+                            else if (celeb.features.face === 'round') value = Math.min(0.8, value - 0.1);
+                        }
+                        // 嘴巴特征影响维度 96-127
+                        else {
+                            if (celeb.features.mouth === 'big') value = Math.max(0.3, value + 0.15);
+                            else if (celeb.features.mouth === 'small') value = Math.min(0.7, value - 0.1);
+                        }
+                    }
+                    
+                    descriptor[i] = value;
+                }
+                return descriptor;
+            }
+            
+            // 找到最匹配的明星
             let bestMatch = celebrities[0];
-            let maxScore = 0;
-
+            let minDistance = Infinity;
+            
             celebrities.forEach(celeb => {
-                let score = Math.random() * 30 + 50; // 基础分50-80
-
-                // 根据脸型调整
-                if (faceRatio > 0.8 && celeb.features.face === 'round') score += 10;
-                if (faceRatio < 0.75 && celeb.features.face === 'oval') score += 10;
-                if (faceRatio < 0.7 && celeb.features.face === 'vshape') score += 10;
-
-                // 根据眼距调整
-                if (eyeRatio > 0.35 && celeb.features.eyes === 'big') score += 10;
-                if (eyeRatio < 0.3 && celeb.features.eyes === 'small') score += 10;
-
-                if (score > maxScore) {
-                    maxScore = score;
+                const celebDescriptor = generateDescriptorFromName(celeb.name);
+                const distance = euclideanDistance(userDescriptor, celebDescriptor);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
                     bestMatch = celeb;
                 }
             });
-
-            // 确保相似度在60-95之间
-            const similarity = Math.min(95, Math.max(60, Math.floor(maxScore)));
-
+            
+            const similarity = distanceToSimilarity(minDistance);
+            
             return {
                 ...bestMatch,
                 similarity: similarity
