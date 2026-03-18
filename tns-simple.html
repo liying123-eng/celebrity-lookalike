@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你最像时代少年团谁？- 快速测试</title>
+    <style>
+        body {
+            font-family: '微软雅黑', sans-serif;
+            background: #ff9a9e;
+            background: linear-gradient(to right, #fecfef 0%, #fecfef 100%);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #ff6b9d;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .question {
+            background: #fff5f7;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .option {
+            background: #ffeef2;
+            border: 2px solid #ffb6c1;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background: #ffc0cb;
+            transform: translateX(10px);
+        }
+        
+        .option.selected {
+            background: #ff6b9d;
+            color: white;
+            border-color: #ff6b9d;
+            transform: scale(1.05);
+        }
+        
+        .btn {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #ff528c;
+            transform: translateY(-3px);
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            display: none;
+        }
+        
+        .member-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .similarity {
+            font-size: 1.8rem;
+            margin: 15px 0;
+            color: #ffd700;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💖 你最像时代少年团谁？</h1>
+        <p>5个简单问题，测出你的少年感特质！</p>
+        
+        <!-- 问题区域 -->
+        <div id="quiz">
+            <!-- 问题1 -->
+            <div class="question" id="q1">
+                <h3>1. 你觉得自己最大的特点是什么？</h3>
+                <div class="option" onclick="selectAnswer(1, 'A')">比较成熟稳重，有责任心</div>
+                <div class="option" onclick="selectAnswer(1, 'B')">活泼开朗，充满活力</div>
+                <div class="option" onclick="selectAnswer(1, 'C')">天真可爱，有趣幽默</div>
+                <div class="option" onclick="selectAnswer(1, 'D')">个性独特，有自己的风格</div>
+            </div>
+            
+            <!-- 问题2 -->
+            <div class="question" id="q2" style="display:none">
+                <h3>2. 朋友们通常怎么形容你？</h3>
+                <div class="option" onclick="selectAnswer(2, 'A')">很靠谱，可以依赖</div>
+                <div class="option" onclick="selectAnswer(2, 'B')">很有活力，能带动气氛</div>
+                <div class="option" onclick="selectAnswer(2, 'C')">很有趣，经常让大家开心</div>
+                <div class="option" onclick="selectAnswer(2, 'D')">很有才华，多才多艺</div>
+            </div>
+            
+            <!-- 问题3 -->
+            <div class="question" id="q3" style="display:none">
+                <h3>3. 闲暇时光你最喜欢做什么？</h3>
+                <div class="option" onclick="selectAnswer(3, 'A')">看书听音乐，安静思考</div>
+                <div class="option" onclick="selectAnswer(3, 'B')">运动健身，户外活动</div>
+                <div class="option" onclick="selectAnswer(3, 'C')">和朋友聊天，分享趣事</div>
+                <div class="option" onclick="selectAnswer(3, 'D')">学习新技能，充实自己</div>
+            </div>
+            
+            <!-- 问题4 -->
+            <div class="question" id="q4" style="display:none">
+                <h3>4. 面对挑战时你的态度？</h3>
+                <div class="option" onclick="selectAnswer(4, 'A')">冷静分析，制定详细计划</div>
+                <div class="option" onclick="selectAnswer(4, 'B')">积极面对，勇敢迎接挑战</div>
+                <div class="option" onclick="selectAnswer(4, 'C')">乐观心态，相信会解决</div>
+                <div class="option" onclick="selectAnswer(4, 'D')">发挥创意，寻找独特方法</div>
+            </div>
+            
+            <!-- 问题5 -->
+            <div class="question" id="q5" style="display:none">
+                <h3>5. 你认为什么是最重要的？</h3>
+                <div class="option" onclick="selectAnswer(5, 'A')">责任和承诺</div>
+                <div class="option" onclick="selectAnswer(5, 'B')">勇气和行动</div>
+                <div class="option" onclick="selectAnswer(5, 'C')">真诚和善良</div>
+                <div class="option" onclick="selectAnswer(5, 'D')">创新和突破</div>
+            </div>
+        </div>
+        
+        <!-- 控制按钮 -->
+        <div id="controls">
+            <button class="btn" id="prev" onclick="prevQuestion()" disabled>上一题</button>
+            <button class="btn" id="next" onclick="nextQuestion()" disabled>下一题</button>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div id="result" class="result-card">
+            <div style="font-size: 3rem;">🌟</div>
+            <div class="member-name" id="member-name">马嘉祺</div>
+            <div class="similarity" id="similarity">85%</div>
+            <div id="description">你有着温柔细腻的性格，像马嘉祺一样充满文艺气息，做事认真负责，是团队中的可靠担当！</div>
+            <button class="btn" onclick="restart()" style="margin-top: 20px;">重新测试</button>
+            <button class="btn" onclick="share()" style="background: #4ecdc4; margin-left: 10px;">分享给朋友</button>
+        </div>
+    </div>
+
+    <script>
+        // 答案记录
+        let answers = {};
+        let currentQ = 1;
+        
+        // 成员对应关系
+        const memberMap = {
+            'A': '马嘉祺',  // 成熟稳重型
+            'B': '丁程鑫',  // 活泼阳光型  
+            'C': '宋亚轩',  // 可爱幽默型
+            'D': '张真源'   // 才华创意型
+        };
+        
+        // 成员描述
+        const descriptions = {
+            '马嘉祺': '你有着温柔细腻的性格，像马嘉祺一样充满文艺气息，做事认真负责，是团队中的可靠担当！',
+            '丁程鑫': '你性格开朗阳光，像丁程鑫一样充满青春活力，热爱运动，总是给人正能量满满的感觉！',
+            '宋亚轩': '你有着可爱的外表和天真的内心，像宋亚轩一样充满童趣，幽默感十足，让人忍不住喜欢！',
+            '张真源': '你拥有出众的才华和艺术天赋，像张真源一样多才多艺，在各个领域都能发光发热！'
+        };
+
+        function selectAnswer(question, answer) {
+            // 清除之前的选中状态
+            document.querySelectorAll(`#q${question} .option`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 设置当前选中
+            event.currentTarget.classList.add('selected');
+            
+            // 记录答案
+            answers[question] = answer;
+            
+            // 启用下一步按钮
+            document.getElementById('next').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQ < 5) {
+                document.getElementById(`q${currentQ}`).style.display = 'none';
+                currentQ++;
+                document.getElementById(`q${currentQ}`).style.display = 'block';
+                updateButtons();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQ > 1) {
+                document.getElementById(`q${currentQ}`).style.display = 'none';
+                currentQ--;
+                document.getElementById(`q${currentQ}`).style.display = 'block';
+                updateButtons();
+            }
+        }
+
+        function updateButtons() {
+            document.getElementById('prev').disabled = currentQ === 1;
+            document.getElementById('next').disabled = !answers[currentQ];
+            document.getElementById('next').textContent = currentQ === 5 ? '查看结果' : '下一题';
+        }
+
+        function showResult() {
+            // 统计答案
+            let count = {'A': 0, 'B': 0, 'C': 0, 'D': 0};
+            for (let ans in answers) {
+                count[answers[ans]]++;
+            }
+            
+            // 找出最多的答案
+            let maxType = 'A';
+            let maxCount = 0;
+            for (let type in count) {
+                if (count[type] > maxCount) {
+                    maxCount = count[type];
+                    maxType = type;
+                }
+            }
+            
+            // 计算相似度
+            const similarity = 70 + Math.min(25, maxCount * 5);
+            
+            // 显示结果
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            const memberName = memberMap[maxType];
+            document.getElementById('member-name').textContent = memberName;
+            document.getElementById('similarity').textContent = similarity + '%';
+            document.getElementById('description').textContent = descriptions[memberName];
+        }
+
+        function restart() {
+            answers = {};
+            currentQ = 1;
+            
+            // 重置界面
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('controls').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            
+            // 重置所有问题显示
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`q${i}`).style.display = i === 1 ? 'block' : 'none';
+                document.querySelectorAll(`#q${i} .option`).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+            }
+            
+            updateButtons();
+        }
+
+        function share() {
+            const name = document.getElementById('member-name').textContent;
+            const percent = document.getElementById('similarity').textContent;
+            const text = `我发现我最像时代少年团的${name}！相似度${percent} 💖 快来测试你像谁吧！`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '时代少年团相似度测试',
+                    text: text
+                });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('已复制分享文案到剪贴板！');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

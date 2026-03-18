@@ -1,0 +1,19 @@
+{
+  "name": "celebrity-lookalike",
+  "version": "1.0.0",
+  "description": "明星撞脸测试网站 - GitHub Pages版本",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "gh-pages -d ."
+  },
+  "keywords": [
+    "celebrity",
+    "face-recognition",
+    "entertainment",
+    "fun"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

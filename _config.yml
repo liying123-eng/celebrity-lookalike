@@ -1,0 +1,15 @@
+# Static website configuration for GitHub Pages
+# No build required - serves static files directly
+
+# Custom domain (optional)
+# yourdomain.com
+
+# Jekyll configuration (if needed)
+theme: jekyll-theme-minimal
+
+# Exclude files from build
+exclude:
+  - node_modules/
+  - package.json
+  - README.md
+  - .gitignore
