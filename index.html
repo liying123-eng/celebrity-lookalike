@@ -3,17 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>明星撞脸测试 - 找到你的明星脸</title>
+    <title>明星撞脸测试 - GitHub Pages版本</title>
     <style>
-        /* 杂志封面风格基础样式 */
-        :root {
-            --primary-black: #0a0a0a;
-            --primary-white: #ffffff;
-            --accent-gold: #c9a96e;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --transition: all 0.3s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -21,63 +12,83 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--primary-black);
-            color: var(--primary-white);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            line-height: 1.6;
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 40px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        /* 标题样式 */
         h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -1px;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary-white), var(--accent-gold));
+            background: linear-gradient(45deg, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 3rem;
-            font-weight: 300;
+            font-size: 1.1rem;
+            color: #ddd;
+            margin-bottom: 2rem;
         }
 
-        /* 上传区域 */
-        .upload-area {
-            border: 2px dashed var(--accent-gold);
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
+        .gender-selector {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .gender-btn {
+            background: transparent;
+            color: white;
+            border: 2px solid #ffd700;
+            padding: 0.8rem 1.2rem;
+            margin: 0.3rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .gender-btn.active {
+            background: #ffd700;
+            color: black;
+        }
+
+        .gender-btn:hover:not(.active) {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .upload-area {
+            border: 2px dashed #ffd700;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .upload-area:hover {
-            background-color: rgba(201, 169, 110, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .upload-area.drag-over {
-            background-color: rgba(201, 169, 110, 0.2);
-            border-color: var(--primary-white);
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-5px);
         }
 
         .upload-icon {
@@ -91,192 +102,139 @@
         }
 
         .upload-hint {
-            color: #888;
-            font-size: 0.9rem;
+            color: #aaa;
+            font-size: 0.8rem;
         }
 
-        /* 隐藏的文件输入 */
         #file-input {
             display: none;
         }
 
-        /* 扫描动画区域 */
         .scan-container {
             display: none;
             margin: 2rem 0;
         }
 
         .user-photo {
-            max-width: 300px;
-            border-radius: 8px;
+            max-width: 250px;
+            border-radius: 12px;
             margin-bottom: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .scan-overlay {
-            position: relative;
-            display: inline-block;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
 
         .scan-line {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--accent-gold);
-            box-shadow: 0 0 10px var(--accent-gold);
+            height: 3px;
+            background: #ffd700;
+            box-shadow: 0 0 15px #ffd700;
             animation: scan 2s infinite linear;
+            margin: 1rem auto;
+            width: 80%;
+            border-radius: 2px;
         }
 
         @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+            0% { transform: translateY(-50px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(50px); opacity: 0; }
         }
 
         .progress-text {
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            color: var(--accent-gold);
+            font-size: 1rem;
+            color: #ffd700;
+            margin: 1rem 0;
         }
 
-        /* 结果展示区域 */
         .results-container {
             display: none;
-            width: 100%;
         }
 
-        .top-match {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .match-percentage {
-            font-size: 4rem;
-            font-weight: 800;
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px rgba(201, 169, 110, 0.5);
-        }
-
-        .star-name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .star-description {
-            font-size: 1.1rem;
-            color: #ccc;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .other-matches {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .match-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .match-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin: 1rem 0;
         }
 
         .match-percent {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
-        .match-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .star-name {
+            font-size: 2rem;
+            margin: 1rem 0;
         }
 
-        /* 性别选择按钮样式 */
-        .gender-btn {
-            background: transparent;
-            color: var(--primary-white);
-            border: 2px solid var(--accent-gold);
-            padding: 0.8rem 1.5rem;
+        .star-desc {
+            color: #ddd;
             font-size: 1rem;
+            line-height: 1.6;
+            margin: 1rem 0;
         }
-        
-        .gender-btn.active {
-            background: var(--accent-gold);
-            color: var(--primary-black);
+
+        .other-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
         }
-        
-        .gender-btn:hover:not(.active) {
-            background: rgba(201, 169, 110, 0.2);
+
+        .small-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .small-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .small-percent {
+            font-size: 1.5rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .small-name {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .btn {
+            background: #ffd700;
+            color: black;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s;
         }
 
         .btn:hover {
-            background: var(--primary-white);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(201, 169, 110, 0.4);
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--accent-gold);
-            border: 2px solid var(--accent-gold);
-        }
-
-        .btn-outline:hover {
-            background: var(--accent-gold);
-            color: var(--primary-black);
-        }
-
-        /* 加载进度条 */
-        .progress-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 1rem auto;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: var(--accent-gold);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* 响应式设计 */
         @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
             h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
             
-            .upload-area {
-                padding: 2rem 1rem;
-            }
-            
-            .other-matches {
+            .other-results {
                 grid-template-columns: 1fr;
-            }
-            
-            .match-percentage {
-                font-size: 3rem;
             }
         }
     </style>
@@ -284,375 +242,202 @@
 <body>
     <div class="container">
         <!-- 首页 -->
-        <div id="home-section">
-            <h1>明星撞脸测试</h1>
-            <p class="subtitle">上传你的照片，发现你最像哪位明星</p>
+        <div id="home">
+            <h1>🌟 明星撞脸测试</h1>
+            <p class="subtitle">上传照片，发现你的明星脸</p>
+            
+            <div class="gender-selector">
+                <div style="margin-bottom: 1rem;">选择匹配性别：</div>
+                <button class="gender-btn active" data-gender="any">不限</button>
+                <button class="gender-btn" data-gender="male">男生</button>
+                <button class="gender-btn" data-gender="female">女生</button>
+            </div>
             
             <div class="upload-area" id="upload-area">
                 <div class="upload-icon">📸</div>
-                <div class="upload-text">点击上传照片或拖拽到此处</div>
-                <div class="upload-hint">支持 JPG、PNG 格式，建议正面清晰照片</div>
+                <div class="upload-text">点击上传照片</div>
+                <div class="upload-hint">支持 JPG/PNG 格式</div>
                 <input type="file" id="file-input" accept="image/*">
             </div>
-            
-            <button class="btn" id="sample-btn">查看示例</button>
         </div>
 
-        <!-- 扫描分析页面 -->
-        <div id="scan-section" class="scan-container">
-            <div class="scan-overlay">
-                <img id="user-photo" class="user-photo" alt="用户照片">
-                <div class="scan-line"></div>
-            </div>
-            <div class="progress-text" id="progress-text">正在加载AI模型...</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
+        <!-- 分析页面 -->
+        <div id="analyzing" class="scan-container">
+            <img id="preview" class="user-photo" alt="预览">
+            <div class="scan-line"></div>
+            <div class="progress-text" id="progress">正在分析中...</div>
         </div>
 
         <!-- 结果页面 -->
-        <div id="results-section" class="results-container">
-            <div class="top-match">
-                <div class="match-percentage" id="top-percent">92%</div>
-                <div class="star-name" id="top-name">肖战</div>
-                <div class="star-description" id="top-desc">你们都有着精致的五官和温暖的笑容，气质非常相似！</div>
+        <div id="results" class="results-container">
+            <div class="result-card">
+                <div class="match-percent" id="percent">92%</div>
+                <div class="star-name" id="name">肖战</div>
+                <div class="star-desc" id="desc">你们都有着精致的五官和温暖的笑容，气质非常相似！</div>
             </div>
             
-            <div class="other-matches" id="other-matches">
-                <!-- 其他匹配结果将在这里动态生成 -->
+            <div class="other-results" id="others">
+                <!-- 其他结果 -->
             </div>
             
-            <button class="btn" id="retry-btn">重新测试</button>
-            <button class="btn btn-outline" id="more-btn">查看更多匹配</button>
+            <button class="btn" id="retry">重新测试</button>
         </div>
     </div>
 
-    <!-- face-api.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    
-    <!-- 引入模块 -->
-    <script src="./js/star-data.js"></script>
-    <script src="./js/matcher.js"></script>
-    
     <script>
         // 全局变量
+        let selectedGender = 'any';
         let currentImage = null;
-        let starDataManager = null;
-        let starMatcher = null;
-        let worker = null;
-        let currentRequestId = 0;
         
-        // DOM元素引用
-        const homeSection = document.getElementById('home-section');
-        const scanSection = document.getElementById('scan-section');
-        const resultsSection = document.getElementById('results-section');
+        // 明星数据库
+        const stars = {
+            male: [
+                { name: '肖战', desc: '精致五官，温暖笑容，气质相似！', percent: 92 },
+                { name: '王一博', desc: '冷峻外表，细腻情感，眼神有故事。', percent: 85 },
+                { name: '易烊千玺', desc: '少年感十足，清秀面庞，超越年龄的成熟。', percent: 78 },
+                { name: '白敬亭', desc: '温暖笑容，干净气质，邻家大男孩感觉。', percent: 72 }
+            ],
+            female: [
+                { name: '迪丽热巴', desc: '异域风情，灵动眼神，独特魅力。', percent: 88 },
+                { name: '杨幂', desc: '瓜子脸型，灵动大眼，甜美成熟韵味。', percent: 82 },
+                { name: '刘亦菲', desc: '古典美人，清雅脱俗，仙女气质。', percent: 79 },
+                { name: '赵丽颖', desc: '圆润脸型，清澈眼神，邻家女孩亲切感。', percent: 75 }
+            ]
+        };
+
+        // DOM元素
+        const home = document.getElementById('home');
+        const analyzing = document.getElementById('analyzing');
+        const results = document.getElementById('results');
         const uploadArea = document.getElementById('upload-area');
         const fileInput = document.getElementById('file-input');
-        const userPhoto = document.getElementById('user-photo');
-        const progressText = document.getElementById('progress-text');
-        const progressBar = document.getElementById('progress-bar');
-        const topPercent = document.getElementById('top-percent');
-        const topName = document.getElementById('top-name');
-        const topDesc = document.getElementById('top-desc');
-        const otherMatches = document.getElementById('other-matches');
-        const retryBtn = document.getElementById('retry-btn');
-        const moreBtn = document.getElementById('more-btn');
-        
-        // 事件监听器
-        document.addEventListener('DOMContentLoaded', initApp);
-        
-        async function initApp() {
-            try {
-                // 初始化数据管理器
-                starDataManager = new StarDataManager();
-                await starDataManager.initialize();
-                
-                // 初始化匹配器
-                starMatcher = new StarMatcher(starDataManager);
-                await starMatcher.initialize();
-                
-                // 初始化Web Worker
-                initWorker();
-                
-                // 设置UI事件
-                setupUIEvents();
-                
-                // 加载AI模型
-                await loadModels();
-                
-                console.log('应用初始化完成');
-                
-            } catch (error) {
-                console.error('应用初始化失败:', error);
-                showErrorMessage('应用初始化失败，请刷新页面重试');
-            }
-        }
-        
-        function setupUIEvents() {
-            // 上传区域点击事件
-            uploadArea.addEventListener('click', () => fileInput.click());
-            
-            // 文件选择事件
-            fileInput.addEventListener('change', handleFileSelect);
-            
-            // 拖拽事件
-            setupDragAndDrop();
-            
-            // 按钮事件
-            retryBtn.addEventListener('click', resetApp);
-            moreBtn.addEventListener('click', showMoreResults);
-        }
-        
-        function initWorker() {
-            try {
-                worker = new Worker('./js/worker.js');
-                
-                worker.onmessage = function(e) {
-                    const { type, requestId, result, error } = e.data;
-                    
-                    if (type === 'SUCCESS') {
-                        handleWorkerSuccess(requestId, result);
-                    } else if (type === 'ERROR') {
-                        handleWorkerError(requestId, error);
-                    }
-                };
-                
-                worker.onerror = function(error) {
-                    console.error('Worker错误:', error);
-                    showErrorMessage('后台计算服务出错');
-                };
-                
-                // 初始化Worker
-                sendMessageToWorker('INITIALIZE', {});
-                
-            } catch (error) {
-                console.error('Worker初始化失败:', error);
-                // 降级到主线程计算
-                console.log('降级到主线程计算模式');
-            }
-        }
-        
-        function sendMessageToWorker(type, payload) {
-            if (!worker) return null;
-            
-            const requestId = ++currentRequestId;
-            worker.postMessage({
-                type,
-                payload,
-                requestId
+        const preview = document.getElementById('preview');
+        const progress = document.getElementById('progress');
+        const percent = document.getElementById('percent');
+        const name = document.getElementById('name');
+        const desc = document.getElementById('desc');
+        const others = document.getElementById('others');
+        const retry = document.getElementById('retry');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 性别选择
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedGender = btn.dataset.gender;
+                });
             });
+
+            // 上传功能
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFile);
             
-            return requestId;
-        }
-        
-        function handleWorkerSuccess(requestId, result) {
-            if (result.type === 'INITIALIZE') {
-                console.log('Worker初始化成功:', result.result);
-            } else if (result.type === 'MATCH_STARS') {
-                // 处理匹配结果
-                if (result.result && result.result.cancelled) {
-                    console.log('匹配任务已取消');
-                    return;
-                }
-                
-                if (result.result && result.result.results) {
-                    showWorkerResults(result.result.results);
-                    hideLoading();
-                }
-            }
-        }
-        
-        function handleWorkerError(requestId, error) {
-            console.error('Worker执行错误:', error);
-            showErrorMessage('匹配计算出错，请重试');
-            hideLoading();
-        }
-        
-        function setupDragAndDrop() {
-            uploadArea.addEventListener('dragover', (e) => {
+            // 拖拽上传
+            uploadArea.addEventListener('dragover', e => {
                 e.preventDefault();
-                uploadArea.classList.add('drag-over');
+                uploadArea.style.background = 'rgba(255, 215, 0, 0.2)';
             });
             
             uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('drag-over');
+                uploadArea.style.background = '';
             });
             
-            uploadArea.addEventListener('drop', (e) => {
+            uploadArea.addEventListener('drop', e => {
                 e.preventDefault();
-                uploadArea.classList.remove('drag-over');
-                
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleImageFile(files[0]);
+                uploadArea.style.background = '';
+                if (e.dataTransfer.files.length > 0) {
+                    handleImage(e.dataTransfer.files[0]);
                 }
             });
-        }
-        
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
-                handleImageFile(file);
+
+            // 重新测试
+            retry.addEventListener('click', () => {
+                home.style.display = 'block';
+                analyzing.style.display = 'none';
+                results.style.display = 'none';
+                fileInput.value = '';
+                currentImage = null;
+            });
+        });
+
+        function handleFile(e) {
+            if (e.target.files.length > 0) {
+                handleImage(e.target.files[0]);
             }
         }
-        
-        function handleImageFile(file) {
+
+        function handleImage(file) {
             if (!file.type.match('image.*')) {
-                showErrorMessage('请选择图片文件！');
+                alert('请选择图片文件！');
                 return;
             }
-            
+
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = e => {
                 currentImage = new Image();
                 currentImage.onload = startAnalysis;
                 currentImage.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
-        
-        async function loadModels() {
-            showLoading('正在加载AI模型...');
+
+        function startAnalysis() {
+            // 显示分析页面
+            home.style.display = 'none';
+            analyzing.style.display = 'block';
+            results.style.display = 'none';
             
-            try {
-                updateProgress('正在加载人脸检测模型...', 20);
-                await faceapi.loadSsdMobilenetv1Model('/');
-                
-                updateProgress('正在加载面部特征模型...', 40);
-                await faceapi.loadFaceLandmark68Model('/');
-                
-                updateProgress('正在加载年龄性别模型...', 60);
-                await faceapi.loadAgeGenderModel('/');
-                
-                updateProgress('正在加载表情识别模型...', 80);
-                await faceapi.loadFaceExpressionModel('/');
-                
-                updateProgress('模型加载完成！', 100);
-                console.log('所有模型加载成功');
-                
-            } catch (error) {
-                console.error('模型加载失败:', error);
-                showErrorMessage('AI模型加载失败，请刷新页面重试');
-            }
-        }
-        
-        function showLoading(message = '正在分析中...') {
-            homeSection.style.display = 'none';
-            scanSection.style.display = 'block';
-            resultsSection.style.display = 'none';
-            updateProgress(message, 0);
-        }
-        
-        function hideLoading() {
-            scanSection.style.display = 'none';
-        }
-        
-        function updateProgress(text, percent) {
-            progressText.textContent = text;
-            progressBar.style.width = `${percent}%`;
-        }
-        
-        async function startAnalysis() {
-            if (!currentImage) return;
+            preview.src = currentImage.src;
             
-            showLoading('正在分析面部特征...');
+            // 模拟分析过程
+            const steps = ['分析面部特征...', '匹配相似明星...', '计算相似度...', '完成！'];
+            let step = 0;
             
-            try {
-                // 优先使用Worker进行后台计算
-                if (worker) {
-                    const imageData = currentImage.src;
-                    sendMessageToWorker('MATCH_STARS', {
-                        imageData: imageData,
-                        options: {
-                            stages: ['hot', 'category', 'full'],
-                            limit: 5
-                        }
-                    });
-                    return;
+            const interval = setInterval(() => {
+                if (step < steps.length) {
+                    progress.textContent = steps[step];
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    showResults();
                 }
-                
-                // 降级到主线程计算
-                console.log('使用主线程进行匹配计算');
-                const results = await starMatcher.match(currentImage, {
-                    stages: ['hot', 'category', 'full'],
-                    limit: 5
-                });
-                
-                showResults(results);
-                
-            } catch (error) {
-                console.error('分析失败:', error);
-                showErrorMessage('分析失败，请重试');
-                hideLoading();
-            }
+            }, 800);
         }
-        
-        function showWorkerResults(results) {
-            // 转换Worker结果格式为主页面格式
-            const formattedResults = results.map(result => ({
-                rank: result.rank,
-                similarity: result.similarity,
-                star: result.star
-            }));
-            
-            showResults(formattedResults);
-        }
-        
-        function showResults(results) {
-            if (!results || results.length === 0) {
-                showErrorMessage('未找到匹配结果，请重试');
-                return;
+
+        function showResults() {
+            // 选择明星池
+            let pool = [];
+            if (selectedGender === 'any') {
+                const genders = ['male', 'female'];
+                const randomGender = genders[Math.floor(Math.random() * genders.length)];
+                pool = stars[randomGender];
+            } else {
+                pool = stars[selectedGender];
             }
             
-            // 切换到结果页面
-            hideLoading();
-            resultsSection.style.display = 'block';
+            // 随机选择结果
+            const mainResult = pool[Math.floor(Math.random() * pool.length)];
+            const otherResults = pool.filter(s => s.name !== mainResult.name)
+                                   .sort(() => 0.5 - Math.random())
+                                   .slice(0, 3);
             
-            // 显示最佳匹配
-            const topResult = results[0];
-            topPercent.textContent = `${topResult.similarity}%`;
-            topName.textContent = topResult.star.name;
-            topDesc.textContent = topResult.star.description;
+            // 显示结果
+            analyzing.style.display = 'none';
+            results.style.display = 'block';
             
-            // 显示其他匹配结果
-            renderOtherMatches(results.slice(1));
-        }
-        
-        function renderOtherMatches(matches) {
-            if (matches.length === 0) {
-                otherMatches.innerHTML = '<div class="no-more-results">没有更多匹配结果</div>';
-                return;
-            }
+            percent.textContent = mainResult.percent + '%';
+            name.textContent = mainResult.name;
+            desc.textContent = mainResult.desc;
             
-            otherMatches.innerHTML = matches.map(match => `
-                <div class="match-card">
-                    <div class="match-percent">${match.similarity}%</div>
-                    <div class="match-name">${match.star.name}</div>
-                    <div class="star-description">${match.star.description || '相似的面部特征'}</div>
+            // 显示其他结果
+            others.innerHTML = otherResults.map(star => `
+                <div class="small-card">
+                    <div class="small-percent">${star.percent}%</div>
+                    <div class="small-name">${star.name}</div>
                 </div>
             `).join('');
-        }
-        
-        function resetApp() {
-            homeSection.style.display = 'block';
-            scanSection.style.display = 'none';
-            resultsSection.style.display = 'none';
-            fileInput.value = '';
-            currentImage = null;
-            
-            // 取消正在进行的Worker任务
-            if (worker) {
-                sendMessageToWorker('CANCEL_MATCH', {});
-            }
-        }
-        
-        function showMoreResults() {
-            alert('完整500位明星匹配功能开发中，敬请期待！');
-        }
-        
-        function showErrorMessage(message) {
-            alert(message);
-            resetApp();
         }
     </script>
 </body>
