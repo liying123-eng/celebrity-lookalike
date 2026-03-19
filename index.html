@@ -175,6 +175,76 @@
             margin: 1rem 0;
         }
 
+        .result-label {
+            font-size: 1rem;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .features-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-name {
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .feature-percent {
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-weight: bold;
+            margin-left: 1rem;
+        }
+
+        .other-section {
+            margin: 1.5rem 0;
+        }
+
         .other-results {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -270,14 +340,28 @@
 
         <!-- 结果页面 -->
         <div id="results" class="results-container">
-            <div class="result-card">
+            <!-- 整体结果 -->
+            <div class="result-card main-result">
+                <div class="result-label">🎯 最像明星</div>
                 <div class="match-percent" id="percent">92%</div>
                 <div class="star-name" id="name">肖战</div>
-                <div class="star-desc" id="desc">你们都有着精致的五官和温暖的笑容，气质非常相似！</div>
+                <div class="star-desc" id="overall">整体相似度高达92%，你们都有着精致的五官轮廓！</div>
             </div>
             
-            <div class="other-results" id="others">
-                <!-- 其他结果 -->
+            <!-- 部位分析 -->
+            <div class="features-section">
+                <div class="section-title">📊 五官相似度分析</div>
+                <div class="features-list" id="features">
+                    <!-- 部位分析结果 -->
+                </div>
+            </div>
+            
+            <!-- 其他可能 -->
+            <div class="other-section">
+                <div class="section-title">✨ 其他相似明星</div>
+                <div class="other-results" id="others">
+                    <!-- 其他结果 -->
+                </div>
             </div>
             
             <button class="btn" id="retry">重新测试</button>
@@ -289,19 +373,99 @@
         let selectedGender = 'any';
         let currentImage = null;
         
-        // 明星数据库
+        // 明星数据库 - 包含部位分析
         const stars = {
             male: [
-                { name: '肖战', desc: '精致五官，温暖笑容，气质相似！', percent: 92 },
-                { name: '王一博', desc: '冷峻外表，细腻情感，眼神有故事。', percent: 85 },
-                { name: '易烊千玺', desc: '少年感十足，清秀面庞，超越年龄的成熟。', percent: 78 },
-                { name: '白敬亭', desc: '温暖笑容，干净气质，邻家大男孩感觉。', percent: 72 }
+                { 
+                    name: '肖战', 
+                    overall: '整体相似度高达92%，你们都有着精致的五官轮廓！',
+                    features: [
+                        { part: '眼睛', desc: '瑞凤眼型，眼尾微微上扬，眼神清澈温柔', similarity: 95 },
+                        { part: '鼻子', desc: '鼻梁高挺，鼻翼精致，侧脸线条优美', similarity: 88 },
+                        { part: '嘴唇', desc: '唇形饱满，嘴角自然上扬，笑容温暖', similarity: 90 },
+                        { part: '脸型', desc: '瓜子脸型，下颌线条流畅，上镜效果好', similarity: 93 }
+                    ],
+                    percent: 92 
+                },
+                { 
+                    name: '王一博', 
+                    overall: '整体相似度85%，冷峻气质与细腻情感并存！',
+                    features: [
+                        { part: '眼睛', desc: '单眼皮，眼型狭长，眼神深邃有故事感', similarity: 90 },
+                        { part: '鼻子', desc: '鼻梁直挺，鼻尖微翘，立体感强', similarity: 85 },
+                        { part: '嘴唇', desc: '薄唇，唇线清晰，表情冷峻时更有魅力', similarity: 82 },
+                        { part: '脸型', desc: '轮廓分明，下颌角明显，有男人味', similarity: 88 }
+                    ],
+                    percent: 85 
+                },
+                { 
+                    name: '易烊千玺', 
+                    overall: '整体相似度78%，少年感与成熟气质兼具！',
+                    features: [
+                        { part: '眼睛', desc: '内双，眼神坚定，有超越年龄的沉稳', similarity: 80 },
+                        { part: '鼻子', desc: '鼻型端正，山根适中，面部协调', similarity: 78 },
+                        { part: '嘴唇', desc: '唇形偏薄，嘴角下垂时显成熟', similarity: 75 },
+                        { part: '脸型', desc: '方中带圆，轮廓硬朗，有辨识度', similarity: 82 }
+                    ],
+                    percent: 78 
+                },
+                { 
+                    name: '白敬亭', 
+                    overall: '整体相似度72%，干净清爽，邻家大男孩气质！',
+                    features: [
+                        { part: '眼睛', desc: '双眼皮，眼型圆润，眼神纯真', similarity: 75 },
+                        { part: '鼻子', desc: '鼻梁适中，鼻头圆润，亲和力十足', similarity: 70 },
+                        { part: '嘴唇', desc: '唇形饱满，笑容阳光，有感染力', similarity: 73 },
+                        { part: '脸型', desc: '鹅蛋脸型，线条柔和，少年感强', similarity: 74 }
+                    ],
+                    percent: 72 
+                }
             ],
             female: [
-                { name: '迪丽热巴', desc: '异域风情，灵动眼神，独特魅力。', percent: 88 },
-                { name: '杨幂', desc: '瓜子脸型，灵动大眼，甜美成熟韵味。', percent: 82 },
-                { name: '刘亦菲', desc: '古典美人，清雅脱俗，仙女气质。', percent: 79 },
-                { name: '赵丽颖', desc: '圆润脸型，清澈眼神，邻家女孩亲切感。', percent: 75 }
+                { 
+                    name: '迪丽热巴', 
+                    overall: '整体相似度88%，异域风情，独特魅力！',
+                    features: [
+                        { part: '眼睛', desc: '大眼深邃，双眼皮明显，眼神灵动', similarity: 92 },
+                        { part: '鼻子', desc: '鼻梁高挺，鼻尖精致，侧颜立体', similarity: 90 },
+                        { part: '嘴唇', desc: '唇形饱满，唇珠明显，性感迷人', similarity: 85 },
+                        { part: '脸型', desc: '瓜子脸型，下颌线条柔和，上镜', similarity: 88 }
+                    ],
+                    percent: 88 
+                },
+                { 
+                    name: '杨幂', 
+                    overall: '整体相似度82%，灵动大眼，甜美成熟！',
+                    features: [
+                        { part: '眼睛', desc: '狐狸眼型，眼尾上扬，灵动有神', similarity: 90 },
+                        { part: '鼻子', desc: '鼻梁高挺，鼻尖微翘，精致小巧', similarity: 85 },
+                        { part: '嘴唇', desc: '唇形饱满，嘴角上扬，笑容甜美', similarity: 80 },
+                        { part: '脸型', desc: '瓜子脸型，下颌尖细，显年轻', similarity: 78 }
+                    ],
+                    percent: 82 
+                },
+                { 
+                    name: '刘亦菲', 
+                    overall: '整体相似度79%，古典美人，仙女气质！',
+                    features: [
+                        { part: '眼睛', desc: '丹凤眼型，眼型修长，眼神清冷', similarity: 82 },
+                        { part: '鼻子', desc: '鼻梁挺直，鼻头圆润，古典美', similarity: 80 },
+                        { part: '嘴唇', desc: '唇形小巧，唇珠饱满，气质优雅', similarity: 78 },
+                        { part: '脸型', desc: '鹅蛋脸型，线条流畅，骨相好', similarity: 85 }
+                    ],
+                    percent: 79 
+                },
+                { 
+                    name: '赵丽颖', 
+                    overall: '整体相似度75%，圆润可爱，邻家女孩！',
+                    features: [
+                        { part: '眼睛', desc: '圆眼大而有神，眼神清澈，亲切感', similarity: 80 },
+                        { part: '鼻子', desc: '鼻梁适中，鼻头圆润，可爱型', similarity: 75 },
+                        { part: '嘴唇', desc: '唇形小巧，嘴角上扬，笑容甜美', similarity: 78 },
+                        { part: '脸型', desc: '圆脸，苹果肌饱满，显年轻', similarity: 72 }
+                    ],
+                    percent: 75 
+                }
             ]
         };
 
@@ -315,7 +479,8 @@
         const progress = document.getElementById('progress');
         const percent = document.getElementById('percent');
         const name = document.getElementById('name');
-        const desc = document.getElementById('desc');
+        const overall = document.getElementById('overall');
+        const features = document.getElementById('features');
         const others = document.getElementById('others');
         const retry = document.getElementById('retry');
 
@@ -417,19 +582,38 @@
                 pool = stars[selectedGender];
             }
             
-            // 随机选择结果
-            const mainResult = pool[Math.floor(Math.random() * pool.length)];
-            const otherResults = pool.filter(s => s.name !== mainResult.name)
-                                   .sort(() => 0.5 - Math.random())
-                                   .slice(0, 3);
+            // 按相似度排序，最高的作为最像明星
+            const sortedPool = [...pool].sort((a, b) => b.percent - a.percent);
+            const mainResult = sortedPool[0];
+            const otherResults = sortedPool.slice(1).slice(0, 3);
             
             // 显示结果
             analyzing.style.display = 'none';
             results.style.display = 'block';
             
+            // 显示整体结果
             percent.textContent = mainResult.percent + '%';
             name.textContent = mainResult.name;
-            desc.textContent = mainResult.desc;
+            overall.textContent = mainResult.overall;
+            
+            // 显示部位分析
+            const featureIcons = {
+                '眼睛': '👁️',
+                '鼻子': '👃',
+                '嘴唇': '👄',
+                '脸型': '😊'
+            };
+            
+            features.innerHTML = mainResult.features.map(feature => `
+                <div class="feature-item">
+                    <div class="feature-icon">${featureIcons[feature.part] || '✨'}</div>
+                    <div class="feature-info">
+                        <div class="feature-name">${feature.part}</div>
+                        <div class="feature-desc">${feature.desc}</div>
+                    </div>
+                    <div class="feature-percent">${feature.similarity}%</div>
+                </div>
+            `).join('');
             
             // 显示其他结果
             others.innerHTML = otherResults.map(star => `
